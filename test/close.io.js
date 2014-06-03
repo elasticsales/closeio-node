@@ -8,6 +8,8 @@ function randomString() {
 }
 
 describe('Close.io API', function () {
+  this.timeout(0);
+
   it('should create, read, updated, delete and search for leads.',
     function (done) {
     var closeio = new Closeio(config.apiKey);
@@ -41,7 +43,7 @@ describe('Close.io API', function () {
           email: 'test@example.com'
         }]
       }]
-    }).then(function () {}).then(function () {}, function () {
+    }).then(function () {}, function () {
       done();
     });
   });
@@ -88,6 +90,53 @@ describe('Close.io API', function () {
         return done();
       }, function (err) {
         throw new Error(err.error);
+      });
+    });
+
+  it('should create and search for leads with custom field containing spaces.',
+    function (done) {
+      var closeio = new Closeio(config.apiKey);
+      var lead_id;
+      closeio.lead.create({
+        name: 'John Wehr',
+        custom: {
+          'Lead initials': 'JW'
+        }
+      }).then(function (data) {
+        lead_id = data.id;
+        return closeio.lead.search({
+          'custom.Lead initials': 'JW'
+        });
+      }).then(function (data) {
+        assert(data.data.length > 0);
+        return closeio.lead.delete(lead_id);
+      }).then(function () {
+        return done();
+      }, function (err) {
+        return closeio.lead.delete(lead_id).then(function() {
+          throw new Error(err.error);
+        });
+      });
+    });
+
+  it('should create and search for all leads if no option is passed',
+    function (done) {
+      var closeio = new Closeio(config.apiKey);
+      var lead_id;
+      closeio.lead.create({
+        name: 'John Wehr'
+      }).then(function (data) {
+        lead_id = data.id;
+        return closeio.lead.search({});
+      }).then(function (data) {
+        assert(data.data.length > 0);
+        return closeio.lead.delete(lead_id);
+      }).then(function () {
+        return done();
+      }, function (err) {
+        return closeio.lead.delete(lead_id).then(function() {
+          throw new Error(err.error);
+        });
       });
     });
 });
