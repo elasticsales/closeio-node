@@ -118,4 +118,25 @@ describe('Close.io API', function () {
         });
       });
     });
+
+  it('should create and search for all leads if no option is passed',
+    function (done) {
+      var closeio = new Closeio(config.apiKey);
+      var lead_id;
+      closeio.lead.create({
+        name: 'John Wehr'
+      }).then(function (data) {
+        lead_id = data.id;
+        return closeio.lead.search({});
+      }).then(function (data) {
+        assert(data.data.length > 0);
+        return closeio.lead.delete(lead_id);
+      }).then(function () {
+        return done();
+      }, function (err) {
+        return closeio.lead.delete(lead_id).then(function() {
+          throw new Error(err.error);
+        });
+      });
+    });
 });
