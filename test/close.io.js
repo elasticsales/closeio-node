@@ -82,6 +82,15 @@ describe('Close.io API', function () {
     });
   });
 
+  it('should get the user list', () => {
+    return closeio.user.read().then((users) => {
+      assert(Array.isArray(users.data));
+
+      // It might be at least one user and looks like a user obj
+      const firstUser = users.data[0];
+    });
+  });
+
   describe('search', function () {
 
     var lead_id;
