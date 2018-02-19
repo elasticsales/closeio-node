@@ -82,6 +82,39 @@ describe('Close.io API', function () {
     });
   });
 
+  it('should get the user list', () => {
+    return closeio.user.list().then((users) => {
+      assert(Array.isArray(users.data));
+
+      // It might be at least one user and looks like a user obj
+      const firstUser = users.data[0];
+      assert(firstUser.id);
+      assert(firstUser.email);
+    });
+  });
+
+  it('should create, read, update, delete note', () => {
+    let leadId;
+    const randomVal = randomString();
+    const randomVal2 = randomString();
+    return closeio.lead.create({
+      name: 'John Wehr'
+    }).then((lead) => {
+      leadId = lead.id;
+      return closeio.note.create(lead.id, randomVal)
+    }).then((note) => {
+      assert(note.note === randomVal);
+      return closeio.note.update(note.id, {
+        note: randomVal2
+      });
+    }).then((note) => {
+      assert(note.note === randomVal2);
+      return closeio.note.delete(note.id);
+    }).then(() => {
+      return closeio.lead.delete(leadId);
+    });
+  });
+
   describe('search', function () {
 
     var lead_id;
@@ -103,7 +136,6 @@ describe('Close.io API', function () {
       var lead_id;
       return closeio.lead.search({})
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
@@ -112,7 +144,6 @@ describe('Close.io API', function () {
       var lead_id;
       return closeio.lead.search({ name: 'John Wehr'})
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
@@ -120,7 +151,6 @@ describe('Close.io API', function () {
     it('should search for leads with custom field containing spaces.', function () {
       return closeio.lead.search({ 'custom.Lead initials': 'JW' })
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
