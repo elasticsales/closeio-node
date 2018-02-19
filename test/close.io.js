@@ -88,6 +88,8 @@ describe('Close.io API', function () {
 
       // It might be at least one user and looks like a user obj
       const firstUser = users.data[0];
+      assert(firstUser.id);
+      assert(firstUser.email);
     });
   });
 
@@ -112,7 +114,6 @@ describe('Close.io API', function () {
       var lead_id;
       return closeio.lead.search({})
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
@@ -121,7 +122,6 @@ describe('Close.io API', function () {
       var lead_id;
       return closeio.lead.search({ name: 'John Wehr'})
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
@@ -129,7 +129,6 @@ describe('Close.io API', function () {
     it('should search for leads with custom field containing spaces.', function () {
       return closeio.lead.search({ 'custom.Lead initials': 'JW' })
         .then(function (data) {
-          // console.log(data)
           assert(data.data.length > 0);
         });
     });
