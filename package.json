@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "node-promise": "0.5.13",
-    "request": "2.87.0"
+    "request": "2.88.2"
   },
   "devDependencies": {
     "mocha": "^5.2.0"
